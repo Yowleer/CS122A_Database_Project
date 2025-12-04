@@ -35,9 +35,8 @@ def import_data(folder_name):
     try:
         cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
 
-        # Drop existing tables (drop_tables.sql)
+        # Drop existing tables
         cursor.execute("SHOW TABLES;")
-        # fetchall() returns a list of tuples
         for table_tuple in cursor.fetchall():
             cursor.execute(f"DROP TABLE IF EXISTS `{table_tuple[0]}`;")
 
@@ -72,8 +71,8 @@ def import_data(folder_name):
                         cursor.execute(sql, row)
 
         # Commit changes and re-enable foreign key checks
-        connection.commit()
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+        connection.commit()
         print("Success")
 
     except Error as e:
@@ -132,7 +131,7 @@ def add_customized_model(mid, bmid):
     """Add a new customized model to the CustomizedModel table."""
     connection = get_connection()
     if not connection:
-        print("Fail")
+        print("Fail to connect to database")
         return
 
     cursor = connection.cursor()
@@ -142,7 +141,7 @@ def add_customized_model(mid, bmid):
         check_sql = "SELECT bmid FROM BaseModel WHERE bmid = %s"
         cursor.execute(check_sql, (bmid,))
         if cursor.fetchone() is None:
-            print("Fail")
+            print("Fail, BaseModel does not exist")
             return
 
         # Insert into CustomizedModel table
