@@ -253,7 +253,8 @@ def main():
                 args[8]  # interests
             )
         else:
-            print("Fail")
+            print("Fail, incorrect number of arguments")
+            
     elif function_name == "addCustomizedModel":
         if len(args) == 2:
             add_customized_model(args[0], args[1])
@@ -268,7 +269,7 @@ def main():
         delete_all_tables()
 
     else:
-        print("Fail")
+        print("Fail, function not found")
 
 if __name__ == "__main__":
     main()
