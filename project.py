@@ -117,11 +117,10 @@ def insert_agent_client(uid, username, email, cardno, cardholder,
         connection.commit()
         print("Success")
 
-    except Error:
-        # Catches duplicate entries, foreign key violations, or connection errors
-        print("Fail")
-    except Exception:
-        print("Fail")
+    except Error as e:
+        print(f"Fail, SQL Error: {e}")
+    except Exception as e:
+        print(f"Fail, Python Error: {e}")
     finally:
         if cursor:
             cursor.close()
@@ -154,10 +153,10 @@ def add_customized_model(mid, bmid):
         connection.commit()
         print("Success")
 
-    except Error:
-        print("Fail")
-    except Exception:
-        print("Fail")
+    except Error as e:
+        print(f"Fail, SQL Error: {e}")
+    except Exception as e:
+        print(f"Fail, Python Error: {e}")
     finally:
         if cursor:
             cursor.close()
