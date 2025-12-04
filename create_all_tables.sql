@@ -18,7 +18,7 @@ CREATE TABLE AgentClient (
     interests TEXT NOT NULL,
     cardholder TEXT NOT NULL,
     expire DATE NOT NULL,
-    cardno INT NOT NULL,
+    cardno BIGINT NOT NULL,
     cvv INT NOT NULL,
     zip INT NOT NULL,
     PRIMARY KEY (uid),
