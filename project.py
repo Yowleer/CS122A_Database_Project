@@ -76,9 +76,9 @@ def import_data(folder_name):
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
         print("Success")
 
-    except Error as e:
+    except Error:
         # Catch SQL errors
-        print(f"Fail {e}")
+        print("Fail")
     except Exception:
         # Catch file errors or python errors
         print("Fail")
