@@ -10,7 +10,7 @@ CREATE TABLE AgentCreator (
     bio TEXT,
     payout TEXT,
     PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES Users(uid) ON DELETE CASCADE
+    FOREIGN KEY (uid) REFERENCES User(uid) ON DELETE CASCADE
 );
 
 CREATE TABLE AgentClient (
@@ -22,7 +22,7 @@ CREATE TABLE AgentClient (
     cvv INT NOT NULL,
     zip INT NOT NULL,
     PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES Users(uid) ON DELETE CASCADE
+    FOREIGN KEY (uid) REFERENCES User(uid) ON DELETE CASCADE
 );
 
 CREATE TABLE BaseModel (

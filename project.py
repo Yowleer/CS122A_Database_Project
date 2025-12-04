@@ -22,6 +22,7 @@ def get_connection():
         print(f"Error connecting to MySQL: {e}")
         return None
 
+# Q1
 def import_data(folder_name):
     """Delete existing tables, create new tables, import data from CSV files."""
     connection = get_connection()
@@ -87,6 +88,94 @@ def import_data(folder_name):
         if connection:
             connection.close()
 
+# Q2
+def insert_agent_client(uid, username, email, cardno, cardholder, 
+                     expire, cvv, zip, interests):
+    """Insert a new agent client into the related tables."""
+    connection = get_connection()
+    if not connection:
+        print("Fail")
+        return
+
+    cursor = connection.cursor()
+
+    try:
+        # Check if User exists, if not fail it
+        check_sql = "SELECT uid FROM User WHERE uid = %s"
+        cursor.execute(check_sql, (uid,))
+        if cursor.fetchone() is None:
+            print("Fail")
+            return
+
+        # Insert into AgentClient table
+        agent_client_sql = """INSERT INTO AgentClient (uid, cardno, cardholder, 
+                         expire, cvv, zip, interests)
+                         VALUES (%s, %s, %s, %s, %s, %s, %s);"""
+        cursor.execute(agent_client_sql, (uid, cardno, cardholder, 
+                                         expire, cvv, zip, interests))
+
+        connection.commit()
+        print("Success")
+
+    except Error:
+        # Catches duplicate entries, foreign key violations, or connection errors
+        print("Fail")
+    except Exception:
+        print("Fail")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+#Q3
+def add_customized_model(mid, bmid):
+    """Add a new customized model to the CustomizedModel table."""
+    connection = get_connection()
+    if not connection:
+        print("Fail")
+        return
+
+    cursor = connection.cursor()
+
+    try:
+        # Check if BaseModel exists
+        check_sql = "SELECT bmid FROM BaseModel WHERE bmid = %s"
+        cursor.execute(check_sql, (bmid,))
+        if cursor.fetchone() is None:
+            print("Fail")
+            return
+
+        # Insert into CustomizedModel table
+        customized_model_sql = """INSERT INTO CustomizedModel (mid, bmid)
+                                  VALUES (%s, %s);"""
+        cursor.execute(customized_model_sql, (mid, bmid))
+
+        connection.commit()
+        print("Success")
+
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+#Q4
+
+#Q5
+
+#Q6
+
+#Q7
+
+#Q8
+
+
+#--TEST FUNCTIONS--#
 def test_connection():
     """Test database connection."""
     connection = get_connection()
@@ -126,16 +215,17 @@ def delete_all_tables():
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
         print("Success")
     except Error:
-        print("Fail")
+        print("Fail to insert")
     finally:
         if cursor:
             cursor.close()
         if connection:
             connection.close()
+#--END OF TEST FUNCTIONS--#
+
 
 def main():
     if len(sys.argv) < 2:
-        # print("Fail")
         return
 
     function_name = sys.argv[1]
@@ -149,12 +239,35 @@ def main():
             import_data(args[0])
         else:
             print("Fail")
+    
+    elif function_name == 'insertAgentClient':
+        if len(args) == 9:
+            insert_agent_client(
+                args[0], # uid
+                args[1], # username (Ignored)
+                args[2], # email (Ignored)
+                args[3], # cardno
+                args[4], # cardholder
+                args[5], # expire
+                args[6], # cvv
+                args[7], # zip
+                args[8]  # interests
+            )
+        else:
+            print("Fail")
+    elif function_name == 'addCustomizedModel':
+        if len(args) == 2:
+            add_customized_model(args[0], args[1])
+        else:
+            print("Fail")
+
     elif function_name == 'test_connection':
         test_connection()
     elif function_name == 'test_insert_table':
         test_insert_table()
     elif function_name == 'delete_all_tables':
         delete_all_tables()
+
     else:
         print("Fail")
 
