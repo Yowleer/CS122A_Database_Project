@@ -65,7 +65,7 @@ def import_data(folder_name):
 
                     num_cols = len(data[0])
                     placeholders = ', '.join(['%s'] * num_cols)
-                    sql = f"INSERT INTO `{table}` VALUES ({placeholders})"
+                    sql = f"INSERT IGNORE INTO `{table}` VALUES ({placeholders})"
 
                     for row in data[1:]:  # Skip header
                         cursor.execute(sql, row)
