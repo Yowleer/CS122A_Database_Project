@@ -28,7 +28,7 @@ def import_data(folder_name):
     connection = get_connection()
     if not connection:
         print("Fail")
-        return False
+        return
 
     cursor = connection.cursor()
 
@@ -75,16 +75,13 @@ def import_data(folder_name):
         connection.commit()
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
         print("Success")
-        return True
 
     except Error:
         # Catch SQL errors
         print("Fail")
-        return False
     except Exception:
         # Catch file errors or python errors
         print("Fail")
-        return False
     finally:
         if cursor:
             cursor.close()
