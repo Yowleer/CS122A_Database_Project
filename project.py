@@ -76,9 +76,9 @@ def import_data(folder_name):
         cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
         print("Success")
 
-    except Error:
+    except Error as e:
         # Catch SQL errors
-        print("Fail")
+        print(f"Fail {e}")
     except Exception:
         # Catch file errors or python errors
         print("Fail")
@@ -234,13 +234,13 @@ def main():
     raw_args = sys.argv[2:]
     args = [None if x == "NULL" else x for x in raw_args]
 
-    if function_name == 'import':
+    if function_name == "import":
         if len(args) == 1:
             import_data(args[0])
         else:
             print("Fail")
     
-    elif function_name == 'insertAgentClient':
+    elif function_name == "insertAgentClient":
         if len(args) == 9:
             insert_agent_client(
                 args[0], # uid
@@ -255,17 +255,17 @@ def main():
             )
         else:
             print("Fail")
-    elif function_name == 'addCustomizedModel':
+    elif function_name == "addCustomizedModel":
         if len(args) == 2:
             add_customized_model(args[0], args[1])
         else:
             print("Fail")
 
-    elif function_name == 'test_connection':
+    elif function_name == "test_connection":
         test_connection()
-    elif function_name == 'test_insert_table':
+    elif function_name == "test_insert_table":
         test_insert_table()
-    elif function_name == 'delete_all_tables':
+    elif function_name == "delete_all_tables":
         delete_all_tables()
 
     else:
