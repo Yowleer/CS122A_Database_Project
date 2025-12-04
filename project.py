@@ -94,7 +94,7 @@ def insert_agent_client(uid, username, email, cardno, cardholder,
     """Insert a new agent client into the related tables."""
     connection = get_connection()
     if not connection:
-        print("Fail")
+        print("Fail to connect to database")
         return
 
     cursor = connection.cursor()
@@ -104,7 +104,7 @@ def insert_agent_client(uid, username, email, cardno, cardholder,
         check_sql = "SELECT uid FROM User WHERE uid = %s"
         cursor.execute(check_sql, (uid,))
         if cursor.fetchone() is None:
-            print("Fail")
+            print("Fail, User does not exist")
             return
 
         # Insert into AgentClient table
@@ -254,7 +254,7 @@ def main():
             )
         else:
             print("Fail, incorrect number of arguments")
-            
+
     elif function_name == "addCustomizedModel":
         if len(args) == 2:
             add_customized_model(args[0], args[1])
