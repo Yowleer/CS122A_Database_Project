@@ -174,7 +174,6 @@ def add_customized_model(mid, bmid):
 
 #Q8
 
-
 #--TEST FUNCTIONS--#
 def test_connection():
     """Test database connection."""
