@@ -87,80 +87,80 @@ def import_data(folder_name):
         if connection:
             connection.close()
 
-# # Q2
-# def insert_agent_client(uid, username, email, cardno, cardholder, 
-#                      expire, cvv, zip, interests):
-#     """Insert a new agent client into the related tables."""
-#     connection = get_connection()
-#     if not connection:
-#         print("Fail to connect to database")
-#         return
+# Q2
+def insert_agent_client(uid, username, email, cardno, cardholder, 
+                     expire, cvv, zip, interests):
+    """Insert a new agent client into the related tables."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
 
-#     cursor = connection.cursor()
+    cursor = connection.cursor()
 
-#     try:
-#         # Check if User exists, if not fail it
-#         check_sql = "SELECT uid FROM User WHERE uid = %s"
-#         cursor.execute(check_sql, (uid,))
-#         if cursor.fetchone() is None:
-#             print("Fail, User does not exist")
-#             return
+    try:
+        # Check if User exists, if not fail it
+        check_sql = "SELECT uid FROM User WHERE uid = %s"
+        cursor.execute(check_sql, (uid,))
+        if cursor.fetchone() is None:
+            print("Fail, User does not exist")
+            return
 
-#         # Insert into AgentClient table
-#         agent_client_sql = """INSERT INTO AgentClient (uid, cardno, cardholder, 
-#                          expire, cvv, zip, interests)
-#                          VALUES (%s, %s, %s, %s, %s, %s, %s);"""
-#         cursor.execute(agent_client_sql, (uid, cardno, cardholder, 
-#                                          expire, cvv, zip, interests))
+        # Insert into AgentClient table
+        agent_client_sql = """INSERT INTO AgentClient (uid, cardno, cardholder, 
+                         expire, cvv, zip, interests)
+                         VALUES (%s, %s, %s, %s, %s, %s, %s);"""
+        cursor.execute(agent_client_sql, (uid, cardno, cardholder, 
+                                         expire, cvv, zip, interests))
 
-#         connection.commit()
-#         print("Success")
+        connection.commit()
+        print("Success")
 
-#     except Error as e:
-#         print(f"Fail, SQL Error: {e}")
-#     except Exception as e:
-#         print(f"Fail, Python Error: {e}")
-#     finally:
-#         if cursor:
-#             cursor.close()
-#         if connection:
-#             connection.close()
+    except Error as e:
+        print(f"Fail, SQL Error: {e}")
+    except Exception as e:
+        print(f"Fail, Python Error: {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
-# #Q3
-# def add_customized_model(mid, bmid):
-#     """Add a new customized model to the CustomizedModel table."""
-#     connection = get_connection()
-#     if not connection:
-#         print("Fail to connect to database")
-#         return
+#Q3
+def add_customized_model(mid, bmid):
+    """Add a new customized model to the CustomizedModel table."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
 
-#     cursor = connection.cursor()
+    cursor = connection.cursor()
 
-#     try:
-#         # Check if BaseModel exists
-#         check_sql = "SELECT bmid FROM BaseModel WHERE bmid = %s"
-#         cursor.execute(check_sql, (bmid,))
-#         if cursor.fetchone() is None:
-#             print("Fail, BaseModel does not exist")
-#             return
+    try:
+        # Check if BaseModel exists
+        check_sql = "SELECT bmid FROM BaseModel WHERE bmid = %s"
+        cursor.execute(check_sql, (bmid,))
+        if cursor.fetchone() is None:
+            print("Fail, BaseModel does not exist")
+            return
 
-#         # Insert into CustomizedModel table
-#         customized_model_sql = """INSERT INTO CustomizedModel (mid, bmid)
-#                                   VALUES (%s, %s);"""
-#         cursor.execute(customized_model_sql, (mid, bmid))
+        # Insert into CustomizedModel table
+        customized_model_sql = """INSERT INTO CustomizedModel (mid, bmid)
+                                  VALUES (%s, %s);"""
+        cursor.execute(customized_model_sql, (mid, bmid))
 
-#         connection.commit()
-#         print("Success")
+        connection.commit()
+        print("Success")
 
-#     except Error as e:
-#         print(f"Fail, SQL Error: {e}")
-#     except Exception as e:
-#         print(f"Fail, Python Error: {e}")
-#     finally:
-#         if cursor:
-#             cursor.close()
-#         if connection:
-#             connection.close()
+    except Error as e:
+        print(f"Fail, SQL Error: {e}")
+    except Exception as e:
+        print(f"Fail, Python Error: {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q4
 
