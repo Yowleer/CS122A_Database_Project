@@ -27,7 +27,7 @@ def import_data(folder_name):
     """Delete existing tables, create new tables, import data from CSV files."""
     connection = get_connection()
     if not connection:
-        print("Fail to connect to database")
+        print("Fail")
         return
 
     cursor = connection.cursor()
@@ -75,12 +75,12 @@ def import_data(folder_name):
         connection.commit()
         print("Success")
 
-    except Error as e:
+    except Error:
         # Catch SQL errors
-        print(f"Fail, SQL Error: {e}")
-    except Exception as e:
+        print("Fail")
+    except Exception:
         # Catch file errors or python errors
-        print(f"Fail, Python Error: {e}")
+        print("Fail")
     finally:
         if cursor:
             cursor.close()
@@ -93,17 +93,17 @@ def insert_agent_client(uid, username, email, cardno, cardholder,
     """Insert a new agent client into the related tables."""
     connection = get_connection()
     if not connection:
-        print("Fail to connect to database")
+        print("Fail")
         return
 
     cursor = connection.cursor()
 
     try:
-        # Check if User exists, if not fail it
+        # Check: if User exists then continue. Else, fail it
         check_sql = "SELECT uid FROM User WHERE uid = %s"
         cursor.execute(check_sql, (uid,))
         if cursor.fetchone() is None:
-            print("Fail, User does not exist")
+            print("Fail")
             return
 
         # Insert into AgentClient table
@@ -141,7 +141,7 @@ def add_customized_model(mid, bmid):
         check_sql = "SELECT bmid FROM BaseModel WHERE bmid = %s"
         cursor.execute(check_sql, (bmid,))
         if cursor.fetchone() is None:
-            print("Fail, BaseModel does not exist")
+            print("Fail")
             return
 
         # Insert into CustomizedModel table
@@ -152,10 +152,10 @@ def add_customized_model(mid, bmid):
         connection.commit()
         print("Success")
 
-    except Error as e:
-        print(f"Fail, SQL Error: {e}")
-    except Exception as e:
-        print(f"Fail, Python Error: {e}")
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
     finally:
         if cursor:
             cursor.close()
