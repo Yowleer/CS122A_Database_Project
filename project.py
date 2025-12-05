@@ -106,8 +106,10 @@ def insert_agent_client(uid, username, email, cardno, cardholder,
             print("Fail, User does not exist")
             return
 
+        # Check if AgentClient already exists?
+
         # Insert into AgentClient table
-        agent_client_sql = """INSERT INTO AgentClient (uid, cardno, cardholder, 
+        agent_client_sql = """INSERT IGNORE INTO AgentClient (uid, cardno, cardholder, 
                          expire, cvv, zip, interests)
                          VALUES (%s, %s, %s, %s, %s, %s, %s);"""
         cursor.execute(agent_client_sql, (uid, cardno, cardholder, 
