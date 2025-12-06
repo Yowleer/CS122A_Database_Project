@@ -163,6 +163,41 @@ def add_customized_model(mid, bmid):
             connection.close()
 
 #Q4
+def delete_base_model(bmid):
+    connection = None
+    cursor = None
+
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # base model exists? fetches first row to check
+        cursor.execute("SELECT 1 FROM BaseModel WHERE bmid = %s;", (bmid,))
+        result = cursor.fetchone()
+
+        if result is None:
+            print("Base Model not detected.")
+            return
+
+        # try function now
+        cursor.execute("DELETE FROM BaseModel WHERE bmid = %s;", (bmid,))
+        connection.commit()
+
+        if cursor.rowcount == 1:
+            print("Success")
+        else:
+            print("Fail")
+
+    except mysql.connector.Error:
+        if connection:
+            connection.rollback()
+        print("Connection Failed.")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q5
 
@@ -257,6 +292,12 @@ def main():
     elif function_name == "addCustomizedModel":
         if len(args) == 2:
             add_customized_model(args[0], args[1])
+        else:
+            print("Fail")
+
+    elif function_name == "deleteBaseModel":
+        if len(args) == 1:
+            delete_base_model(args[0])
         else:
             print("Fail")
 
