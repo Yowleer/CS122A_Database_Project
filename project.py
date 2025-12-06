@@ -99,9 +99,8 @@ def insert_agent_client(uid, username, email, cardno, cardholder,
     cursor = connection.cursor()
 
     try:
-        # Check: if User exists then continue. Else, fail it
-        check_sql = "SELECT uid FROM User WHERE uid = %s"
-        cursor.execute(check_sql, (uid,))
+        # Check: if User doesn't exist, return. Else, continue to insert
+        cursor.execute("SELECT uid FROM User WHERE uid = %s" (uid,))
         if cursor.fetchone() is None:
             print("Fail")
             return
@@ -137,9 +136,8 @@ def add_customized_model(mid, bmid):
     cursor = connection.cursor()
 
     try:
-        # Check if BaseModel exists
-        check_sql = "SELECT bmid FROM BaseModel WHERE bmid = %s"
-        cursor.execute(check_sql, (bmid,))
+        # Check: if BaseModel doesn't exist, return. Else, continue to add
+        cursor.execute("SELECT bmid FROM BaseModel WHERE bmid = %s", (bmid,))
         if cursor.fetchone() is None:
             print("Fail")
             return
