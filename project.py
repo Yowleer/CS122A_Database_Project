@@ -204,38 +204,34 @@ def list_internet_service(bmid):
     if not connection:
         print("Fail to connect to database")
         return
-    try:
-        connection = get_connection()
-        cursor = connection.cursor()
 
+    cursor = connection.cursor()
+
+    try:
         # Check: if BaseModel doesn't exist, return. Else, continue to list
-        cursor.execute("SELECT bmid FROM BaseModel WHERE bmid = %s", (bmid,))
+        cursor.execute("SELECT 1 FROM BaseModel WHERE bmid = %s", (bmid,))
         if cursor.fetchone() is None:
-            print("Fail, base model not found")
+            print("Fail")
             return
 
         # From ModelServices, find all row with bmid and select sid
         cursor.execute("""
-        SELECT sid, endpoints, provider
-        FROM InternetService
-        WHERE sid IN (
-            SELECT sid
-            FROM ModelServices
-            WHERE bmid = %s
-        )
-        ORDER BY provider ASC;
+        SELECT i.sid, i.endpoints, i.provider
+        FROM InternetService i
+        JOIN ModelServices m ON i.sid = m.sid
+        WHERE m.bmid = %s
+        ORDER BY i.provider ASC;
         """, (bmid,))
-
-        # Print result table: sid, endpoints, provider
         rows = cursor.fetchall()
+        # Print results
         if rows:
             for row in rows:
                 print(f"{row[0]},{row[1]},{row[2]}")
 
-    except Error as e:
-        print(f"Fail, {e}")
-    except Exception as e:
-        print(f"Fail, {e}")
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
     finally:
         if cursor:
             cursor.close()
