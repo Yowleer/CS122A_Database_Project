@@ -257,7 +257,7 @@ def count_customized_model(bmid_list):
         LEFT JOIN CustomizedModel c ON b.bmid = c.bmid
         WHERE b.bmid IN ({placeholders})
         GROUP BY b.bmid
-        ORDERED BY b.bmid ASC;
+        ORDER BY b.bmid ASC;
         """
         cursor.execute(mysql_query, bmid_list)
         rows = cursor.fetchall()
