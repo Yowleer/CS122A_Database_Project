@@ -146,7 +146,6 @@ def add_customized_model(mid, bmid):
         customized_model_sql = """INSERT INTO CustomizedModel (mid, bmid)
                                   VALUES (%s, %s);"""
         cursor.execute(customized_model_sql, (mid, bmid))
-
         connection.commit()
         print("Success")
 
@@ -162,35 +161,30 @@ def add_customized_model(mid, bmid):
 
 #Q4
 def delete_base_model(bmid):
-    connection = None
-    cursor = None
+    """Delete a base model from the BaseModel table."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
+
+    cursor = connection.cursor()
 
     try:
-        connection = get_connection()
-        cursor = connection.cursor()
-
-        # base model exists? fetches first row to check
+        # Check: if base model doesnt exist, return. Else, continuing to delete
         cursor.execute("SELECT 1 FROM BaseModel WHERE bmid = %s;", (bmid,))
-        result = cursor.fetchone()
-
-        if result is None:
-            print("Base Model not detected.")
+        if cursor.fetchone() is None:
+            print("Fail")
             return
 
-        # try function now
+        # Delete from BaseModel table
         cursor.execute("DELETE FROM BaseModel WHERE bmid = %s;", (bmid,))
         connection.commit()
+        print("Success")
 
-        if cursor.rowcount == 1:
-            print("Success")
-        else:
-            print("Fail")
-
-    except mysql.connector.Error:
-        if connection:
-            connection.rollback()
-        print("Connection Failed.")
-
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
     finally:
         if cursor:
             cursor.close()
