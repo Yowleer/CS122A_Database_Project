@@ -100,7 +100,7 @@ def insert_agent_client(uid, username, email, cardno, cardholder,
 
     try:
         # Check: if User doesn't exist, return. Else, continue to insert
-        cursor.execute("SELECT uid FROM User WHERE uid = %s" (uid,))
+        cursor.execute("SELECT uid FROM User WHERE uid = %s", (uid,))
         if cursor.fetchone() is None:
             print("Fail")
             return
@@ -198,6 +198,49 @@ def delete_base_model(bmid):
             connection.close()
 
 #Q5
+def list_internet_service(bmid):
+    """List all internet services that the model is utilizing, sorted by name, ascending."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Check: if BaseModel doesn't exist, return. Else, continue to list
+        cursor.execute("SELECT bmid FROM BaseModel WHERE bmid = %s", (bmid,))
+        if cursor.fetchone() is None:
+            print("Fail, base model not found")
+            return
+
+        # From ModelServices, find all row with bmid and select sid
+        cursor.execute("""
+        SELECT sid, endpoints, provider
+        FROM InternetService
+        WHERE sid IN (
+            SELECT sid
+            FROM ModelServices
+            WHERE bmid = %s
+        )
+        ORDER BY provider ASC;
+        """, (bmid,))
+
+        # Print result table: sid, endpoints, provider
+        rows = cursor.fetchall()
+        if rows:
+            for row in rows:
+                print(f"{row[0]},{row[1]},{row[2]}")
+
+    except Error as e:
+        print(f"Fail, {e}")
+    except Exception as e:
+        print(f"Fail, {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q6
 
@@ -296,6 +339,12 @@ def main():
     elif function_name == "deleteBaseModel":
         if len(args) == 1:
             delete_base_model(args[0])
+        else:
+            print("Fail")
+    
+    elif function_name == "listInternetService":
+        if len(args) == 1:
+            list_internet_service(args[0])
         else:
             print("Fail")
 
