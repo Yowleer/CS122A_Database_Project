@@ -239,6 +239,41 @@ def list_internet_service(bmid):
             connection.close()
 
 #Q6
+def count_customized_model(bmid_list):
+    """Count the number of customized models for each base model."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
+
+    cursor = connection.cursor()
+
+    try:
+        num_cols = len(bmid_list)
+        placeholders = ', '.join(['%s'] * num_cols)
+        mysql_query = f"""
+        SELECT b.bmid, b.description, count(c.bmid)
+        FROM basemodel b
+        LEFT JOIN customizedmodel c ON b.bmid = c.bmid
+        WHERE b.bmid IN ({placeholders})
+        GROUP BY b.bmid
+        """
+        cursor.execute(mysql_query, bmid_list)
+        rows = cursor.fetchall()
+        # Print results
+        if rows:
+            for row in rows:
+                print(f"{row[0]},{row[1]},{row[2]}")
+    
+    except Error as e:
+        print(f"Fail, {e}")
+    except Exception as e:
+        print(f"Fail, {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q7
 
@@ -341,6 +376,12 @@ def main():
     elif function_name == "listInternetService":
         if len(args) == 1:
             list_internet_service(args[0])
+        else:
+            print("Fail")
+
+    elif function_name == "countCustomizedModel":
+        if len(args) >= 1:
+            count_customized_model(args)
         else:
             print("Fail")
 
