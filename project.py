@@ -253,8 +253,8 @@ def count_customized_model(bmid_list):
         placeholders = ', '.join(['%s'] * num_cols)
         mysql_query = f"""
         SELECT b.bmid, b.description, count(c.bmid)
-        FROM basemodel b
-        LEFT JOIN customizedmodel c ON b.bmid = c.bmid
+        FROM BaseModel b
+        LEFT JOIN CustomizedModel c ON b.bmid = c.bmid
         WHERE b.bmid IN ({placeholders})
         GROUP BY b.bmid
         ORDERED BY b.bmid ASC;
