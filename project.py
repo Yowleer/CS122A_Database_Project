@@ -344,13 +344,167 @@ def list_basemodel_keyword(keyword):
             connection.close()
 
 #Q9.1
-def find_most_used_version_of_basemodel(sid):
-    """Given an Internet Service ID (sid),
-    find the most frequently used version among all Base Models that utilize it."""
+def list_most_used_versions():
+    """For each Internet Service(sid),
+    find the most frequently used version among all Base Models that utilize it.
+    If multiple versions have the same highest frequency, you may return any one of them."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
+
+    cursor = connection.cursor()
+
+    try:
+        # SQL LOGIC EXPLANATION:
+        # 1. CTE 'ServiceCounts': Group by SID and Version to count how many times each pair appears.
+        # 2. CTE 'RankedCounts': Use ROW_NUMBER() to rank the versions per SID.
+        #    - PARTITION BY sid: Restart the ranking for every new Service ID.
+        #    - ORDER BY usage_count DESC: The most frequent version gets rank 1.
+        # 3. Final SELECT: Keep only the rows where rank_num = 1.
+        
+        query = """
+        WITH ServiceCounts AS (
+            SELECT sid, version, COUNT(*) as usage_count
+            FROM ModelServices
+            GROUP BY sid, version
+        ),
+        RankedCounts AS (
+            SELECT 
+                sid, 
+                version, 
+                usage_count,
+                ROW_NUMBER() OVER (PARTITION BY sid ORDER BY usage_count DESC) as rank_num
+            FROM ServiceCounts
+        )
+        SELECT sid, version, usage_count
+        FROM RankedCounts
+        WHERE rank_num = 1
+        ORDER BY sid ASC;
+        """
+
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        print("+-----+---------+-----------+")
+        print("| sid | version | frequency |")
+        print("+-----+---------+-----------+")
+
+        if rows:
+            for row in rows:
+                # row[0]: sid, row[1]: version, row[2]: frequency
+                print(f"| {row[0]:^3} | {row[1]:^7} | {row[2]:^9} |")
+        print("+-----+---------+-----------+")
+
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q9.2
+def list_common_services(username='user_iuwrh'):
+    """Find all the Internet Service(sid) that are utilized by 
+    models built by the specific agent creator."""
+    
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
+
+    cursor = connection.cursor()
+
+    try:
+        # CONSOLIDATED QUERY (Based on Step 3 Debug Logic)
+        # Logic: 
+        # 1. Join Tables: Link InternetService -> ModelServices -> BaseModel -> User.
+        # 2. Filter: Only select rows where the creator is 'user_iuwrh'.
+        # 3. Select: Return the distinct Service IDs (sid) found.
+        # Note: This finds ALL services used by the user, not just the intersection.
+        
+        query = """
+        SELECT DISTINCT i.sid
+        FROM InternetService i
+        JOIN ModelServices ms ON i.sid = ms.sid
+        JOIN BaseModel bm ON ms.bmid = bm.bmid
+        JOIN User u ON bm.creator_uid = u.uid
+        WHERE u.username = %s;
+        """
+
+        cursor.execute(query, (username,))
+        rows = cursor.fetchall()
+
+        if rows:
+            print("+-----+")
+            print("| sid |")
+            print("+-----+")
+            for row in rows:
+                print(f"| {row[0]:^3} |")
+            print("+-----+")
+        else:
+            print("No services found for this user.")
+        
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q9.3
+def list_unused_customized_models():
+    """Find all customized models(mid) that do not appear in model configurations."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
+
+    cursor = connection.cursor()
+
+    try:
+        # SQL LOGIC: LEFT JOIN EXCLUSION
+        # 1. Select from CustomizedModel (cm).
+        # 2. LEFT JOIN ModelConfigurations (mc) on BOTH keys (bmid and mid).
+        # 3. WHERE mc.cid IS NULL: This keeps only the rows from 'cm' that 
+        #    found NO match in 'mc'.
+        
+        query = """
+        SELECT cm.mid
+        FROM CustomizedModel cm
+        LEFT JOIN ModelConfigurations mc 
+            ON cm.bmid = mc.bmid AND cm.mid = mc.mid
+        WHERE mc.cid IS NULL;
+        """
+
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        if rows:
+            print("+-----+")
+            print("| mid |")
+            print("+-----+")
+            for row in rows:
+                print(f"| {row[0]:^3} |")
+            print("+-----+")
+        else:
+            print("All customized models are configured (or none exist).")
+
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q9
 def print_NL2SQL_result():
@@ -434,6 +588,13 @@ def main():
 
     elif function_name == "printNL2SQLresult":
         print_NL2SQL_result()
+
+    elif function_name == "listMostUsedVersions":
+        list_most_used_versions()
+    elif function_name == "listCommonServices":
+        list_common_services()
+    elif function_name == "listUnusedCustomizedModels":
+        list_unused_customized_models()
 
     else:
         print("Fail, function not found")
