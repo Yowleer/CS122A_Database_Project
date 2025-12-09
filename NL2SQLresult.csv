@@ -1,3 +1,4 @@
-1,mostUsedVersionOfBaseModel,Gemini,"Is quote "", '' OK?",1,LLM_said_do_this
-2,findSIDforBaseModel,Gemini,prompt_like_this_2,2,LLM_said_do_this
-3,findMIDnotInConfig,Gemini,prompt_like_this_3,3,LLM_said_do_this
+NLquery_id,NLquery str,LLM_model_name str,prompt str,LLM_returned_SQL_id int,LLM_returned_SQL_query str,SQL_correct bool
+1,mostUsedVersionOfBaseModel,Gemini,"Is quote "", '' OK?",1,LLM_said_do_this,True
+2,findSIDforBaseModel,Gemini,prompt_like_this_2,2,LLM_said_do_this,True
+3,findMIDnotInConfig,Gemini,prompt_like_this_3,3,LLM_said_do_this,True
