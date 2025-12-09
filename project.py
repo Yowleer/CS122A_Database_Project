@@ -274,7 +274,7 @@ def count_customized_model(bmid_list):
 def top_n_duration_config(uid, n):
     """Given an AgentClient uid,
     list top-N longest duration configurations
-    with the longest duration managed by that client"""
+    with the longest duration managed by that client."""
     connection = get_connection()
     if not connection:
         print("Fail to connect to database")
@@ -284,7 +284,7 @@ def top_n_duration_config(uid, n):
 
     try:
         mysql_query = """
-        SELECT s.client_uid, s.cid, s.labels, s.content, max(mc.duration)
+        SELECT s.client_uid, s.cid, s.labels, s.content, MAX(mc.duration)
         FROM (SELECT * FROM Configuration WHERE client_uid = %s) AS s
         NATURAL JOIN ModelConfigurations mc
         GROUP BY s.cid
@@ -308,7 +308,40 @@ def top_n_duration_config(uid, n):
             connection.close()
 
 #Q8
+def list_basemodel_keyword(keyword):
+    """List 5 base models that are utilizing LLM services
+    whose domain contains the keyword."""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
 
+    cursor = connection.cursor()
+
+    try:
+        mysql_query = """
+        SELECT ms.bmid, l.sid, i.provider , l.domain
+        FROM (SELECT * FROM LLMService WHERE domain = %s) as l
+            NATURAL JOIN InternetService i
+            NATURAL JOIN ModelServices ms    
+        ORDER BY bmid ASC
+        LIMIT 5"""
+        cursor.execute(mysql_query, (keyword,))
+        rows = cursor.fetchall()
+        # Print results
+        if rows:
+            for row in rows:
+                print(f"{row[0]},{row[1]},{row[2]},{row[3]}")
+
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 def main():
     if len(sys.argv) < 2:
@@ -375,6 +408,10 @@ def main():
                 print("Fail")
         else:
             print("Fail")
+
+    elif function_name == "listBaseModelKeyWord":
+        if len(args) == 1:
+            list_basemodel_keyword(args[0])
 
     else:
         print("Fail, function not found")
