@@ -283,13 +283,6 @@ def top_n_duration_config(uid, n):
     cursor = connection.cursor()
 
     try:
-        # mysql_query = """
-        # SELECT s.client_uid, s.cid, s.labels, s.content, mc.duration
-        # FROM (SELECT * FROM Configuration WHERE client_uid = %s) AS s
-        # NATURAL JOIN ModelConfigurations mc
-        # ORDER BY duration DESC
-        # LIMIT %s"""
-
         mysql_query = """
         SELECT s.client_uid, s.cid, s.labels, s.content, max(mc.duration)
         FROM (SELECT * FROM Configuration WHERE client_uid = %s) AS s
@@ -304,10 +297,10 @@ def top_n_duration_config(uid, n):
             for row in rows:
                 print(f"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}")
 
-    except Error as e:
-        print(f"Fail, {e}")
-    except Exception as e:
-        print(f"Fail, {e}")
+    except Error:
+        print("Fail")
+    except Exception:
+        print("Fail")
     finally:
         if cursor:
             cursor.close()
