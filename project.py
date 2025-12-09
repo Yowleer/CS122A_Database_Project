@@ -283,11 +283,19 @@ def top_n_duration_config(uid, n):
     cursor = connection.cursor()
 
     try:
+        # mysql_query = """
+        # SELECT s.client_uid, s.cid, s.labels, s.content, mc.duration
+        # FROM (SELECT * FROM Configuration WHERE client_uid = %s) AS s
+        # NATURAL JOIN ModelConfigurations mc
+        # ORDER BY duration DESC
+        # LIMIT %s"""
+
         mysql_query = """
-        SELECT s.client_uid, s.cid, s.labels, s.content, mc.duration
+        SELECT s.client_uid, s.cid, s.labels, s.content, max(mc.duration)
         FROM (SELECT * FROM Configuration WHERE client_uid = %s) AS s
         NATURAL JOIN ModelConfigurations mc
-        ORDER BY duration DESC
+        GROUP BY s.cid
+        ORDER BY max(mc.duration) DESC
         LIMIT %s"""
         cursor.execute(mysql_query, (uid, n))
         rows = cursor.fetchall()
