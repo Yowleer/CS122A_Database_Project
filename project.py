@@ -260,10 +260,10 @@ def count_customized_model(bmid_list):
             for row in rows:
                 print(f"{row[0]},{row[1]},{row[2]}")
     
-    except Error as e:
-        print(f"Fail, {e}")
-    except Exception as e:
-        print(f"Fail, {e}")
+    except Error:
+        print(f"Fail")
+    except Exception:
+        print(f"Fail")
     finally:
         if cursor:
             cursor.close()
