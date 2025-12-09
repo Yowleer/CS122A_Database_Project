@@ -343,6 +343,22 @@ def list_basemodel_keyword(keyword):
         if connection:
             connection.close()
 
+#Q9.1
+
+#Q9.2
+
+#Q9.3
+
+#Q9
+def print_NL2SQL_result():
+    """Print csv result for NL2SQL Q1, Q2, Q3."""
+    with open("NL2SQLresult.csv", 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        data = list(reader)
+        
+        for row in data[0:]:
+            print(','.join(row))
+
 def main():
     if len(sys.argv) < 2:
         return
@@ -412,6 +428,9 @@ def main():
     elif function_name == "listBaseModelKeyWord":
         if len(args) == 1:
             list_basemodel_keyword(args[0])
+
+    elif function_name == "printNL2SQLresult":
+        print_NL2SQL_result()
 
     else:
         print("Fail, function not found")
