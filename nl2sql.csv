@@ -1,0 +1,3 @@
+1,mostUsedVersionOfBaseModel,Gemini,"Is quote "", '' OK?",101,LLM_said_do_this,True
+2,findSIDforBaseModel,Gemini,prompt_like_this_2,204,LLM_said_do_this,True
+3,findMIDnotInConfig,Gemini,prompt_like_this_3,309,LLM_said_do_this,True
