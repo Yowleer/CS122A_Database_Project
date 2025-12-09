@@ -271,57 +271,42 @@ def count_customized_model(bmid_list):
             connection.close()
 
 #Q7
+def top_n_duration_config(uid, n):
+    """Given an AgentClient uid,
+    list top-N longest duration configurations
+    with the longest duration managed by that client"""
+    connection = get_connection()
+    if not connection:
+        print("Fail to connect to database")
+        return
+
+    cursor = connection.cursor()
+
+    try:
+        mysql_query = """
+        SELECT s.client_uid, s.cid, s.labels, s.content, mc.duration
+        FROM (SELECT * FROM Configuration WHERE client_uid = %s) AS s
+        NATURAL JOIN ModelConfigurations mc
+        ORDER BY duration DESC
+        LIMIT %s"""
+        cursor.execute(mysql_query, (uid, n))
+        rows = cursor.fetchall()
+        # Print results
+        if rows:
+            for row in rows:
+                print(f"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]}")
+
+    except Error as e:
+        print(f"Fail, {e}")
+    except Exception as e:
+        print(f"Fail, {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
 #Q8
-
-
-#--TEST FUNCTIONS--#
-def test_connection():
-    """Test database connection."""
-    connection = get_connection()
-    if connection:
-        print("Success")
-        connection.close()
-    else:
-        print("Fail")
-
-def test_insert_table():
-    connection = get_connection()
-    cursor = connection.cursor()
-    try:
-        cursor.execute("CREATE TABLE IF NOT EXISTS test_table (id INT PRIMARY KEY, name VARCHAR(50));")
-        cursor.execute("INSERT INTO test_table (id, name) VALUES (1, 'Test Name');")
-        connection.commit()
-        print("Success")
-    except Error:
-        print("Fail")
-    finally:
-        # cursor.execute("DROP TABLE IF EXISTS test_table;")
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
-
-def delete_all_tables():
-    connection = get_connection()
-    cursor = connection.cursor()
-
-    try:
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-        cursor.execute("SHOW TABLES;")
-        for table_tuple in cursor.fetchall():
-            cursor.execute(f"DROP TABLE IF EXISTS `{table_tuple[0]}`;")
-        
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-        print("Success")
-    except Error:
-        print("Fail to insert")
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
-#--END OF TEST FUNCTIONS--#
 
 
 def main():
@@ -380,12 +365,15 @@ def main():
         else:
             print("Fail")
 
-    elif function_name == "test_connection":
-        test_connection()
-    elif function_name == "test_insert_table":
-        test_insert_table()
-    elif function_name == "delete_all_tables":
-        delete_all_tables()
+    elif function_name == "topNDurationConfig":
+        if len(args) == 2:
+            try:
+                n = int(args[1])
+                top_n_duration_config(args[0], n)
+            except ValueError:
+                print("Fail")
+        else:
+            print("Fail")
 
     else:
         print("Fail, function not found")
