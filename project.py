@@ -353,14 +353,14 @@ def find_most_used_version_of_basemodel(sid):
 #Q9.3
 
 #Q9
-def print_NL2SQL_result():
-    """Print csv result for NL2SQL Q1, Q2, Q3."""
-    with open("NL2SQLresult.csv", 'r') as csvfile:
-        reader = csv.reader(csvfile)
-        data = list(reader)
+# def print_NL2SQL_result():
+#     """Print csv result for NL2SQL Q1, Q2, Q3."""
+#     with open("NL2SQLresult.csv", 'r') as csvfile:
+#         reader = csv.reader(csvfile)
+#         data = list(reader)
         
-        for row in data[0:]:
-            print(','.join(row))
+#         for row in data[0:]:
+#             print(','.join(row))
 
 def main():
     if len(sys.argv) < 2:
@@ -432,8 +432,8 @@ def main():
         if len(args) == 1:
             list_basemodel_keyword(args[0])
 
-    elif function_name == "printNL2SQLresult":
-        print_NL2SQL_result()
+    # elif function_name == "printNL2SQLresult":
+    #     print_NL2SQL_result()
 
     else:
         print("Fail, function not found")
